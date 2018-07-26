@@ -9,10 +9,10 @@ namespace netRAtoolClient
 {
     public partial class Form1 : Form
     {
-
         private readonly TcpClient client = new TcpClient();
         private NetworkStream mainStream;
-        private int portNumber;
+        private int portNumber = 7678;
+        private string ipAddr = "127.0.0.1";
         
         private static Image TakeDesktop()
         {
@@ -32,34 +32,17 @@ namespace netRAtoolClient
             binFormatter.Serialize(mainStream, TakeDesktop());
         }
 
-        public Form1()
-        {
-            InitializeComponent();
-        }
 
         private void btnConnectClick_Click(object sender, EventArgs e)
         {
-            portNumber = int.Parse(textBox2.Text);
-
-            if(btnConnectClick.Text.StartsWith("Disconnect"))
+            try
             {
-                btnConnectClick.Text = "Connect";
-                timer1.Stop();
-                btnRemoteDesktop.Text = "Share Desktop";
-                client.Close();
+                client.Connect(ipAddr, portNumber);
+                Console.WriteLine("#Client: Connected to server");
             }
-            else
+            catch(Exception)
             {
-                try
-                {
-                    client.Connect(textBox1.Text, portNumber);
-                    btnConnectClick.Text = "Disconnect";
-                    MessageBox.Show("Connected to server!");
-                }
-                catch(Exception)
-                {
-                    MessageBox.Show("Failed to connect...");
-                }
+                Console.WriteLine("#Client: Failed to connect");
             }
         }
 
@@ -68,18 +51,30 @@ namespace netRAtoolClient
             if(btnRemoteDesktop.Text.StartsWith("Share"))
             {
                 timer1.Start();
-                btnRemoteDesktop.Text = "Stop Remote";
+                Console.WriteLine("#Client: Share desktop");
             }
             else
             {
                 timer1.Stop();
-                btnRemoteDesktop.Text = "Share Desktop";
+                Console.WriteLine("#Client: Not share desktop");
             }
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
             SendDesktopImage();
+        }
+
+        /*
+        protected override void SetVisibleCore(bool value)
+        {
+            base.SetVisibleCore(false);
+        }
+        */
+
+        public Form1()
+        {
+            InitializeComponent();
         }
     }
 }
