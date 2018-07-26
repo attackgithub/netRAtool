@@ -40,9 +40,9 @@
             this.btnConnectClick.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
             this.btnConnectClick.Location = new System.Drawing.Point(12, 12);
             this.btnConnectClick.Name = "btnConnectClick";
-            this.btnConnectClick.Size = new System.Drawing.Size(75, 37);
+            this.btnConnectClick.Size = new System.Drawing.Size(50, 25);
             this.btnConnectClick.TabIndex = 2;
-            this.btnConnectClick.Text = "Connect";
+            this.btnConnectClick.Text = "Conn";
             this.btnConnectClick.UseVisualStyleBackColor = false;
             this.btnConnectClick.Click += new System.EventHandler(this.btnConnectClick_Click);
             // 
@@ -51,11 +51,11 @@
             this.btnRemoteDesktop.BackColor = System.Drawing.Color.Black;
             this.btnRemoteDesktop.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
             this.btnRemoteDesktop.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
-            this.btnRemoteDesktop.Location = new System.Drawing.Point(12, 55);
+            this.btnRemoteDesktop.Location = new System.Drawing.Point(12, 43);
             this.btnRemoteDesktop.Name = "btnRemoteDesktop";
-            this.btnRemoteDesktop.Size = new System.Drawing.Size(75, 37);
+            this.btnRemoteDesktop.Size = new System.Drawing.Size(50, 27);
             this.btnRemoteDesktop.TabIndex = 3;
-            this.btnRemoteDesktop.Text = "Share Desktop";
+            this.btnRemoteDesktop.Text = "Share";
             this.btnRemoteDesktop.UseVisualStyleBackColor = false;
             this.btnRemoteDesktop.Click += new System.EventHandler(this.btnRemoteDesktop_Click);
             // 
@@ -68,7 +68,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.ClientSize = new System.Drawing.Size(95, 101);
+            this.ClientSize = new System.Drawing.Size(59, 61);
             this.Controls.Add(this.btnRemoteDesktop);
             this.Controls.Add(this.btnConnectClick);
             this.ForeColor = System.Drawing.SystemColors.ControlText;
