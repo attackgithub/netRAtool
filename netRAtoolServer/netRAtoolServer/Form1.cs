@@ -70,15 +70,15 @@ namespace netRAtoolServer
                     {
                         mainStream = client.GetStream();
                         whatDataClientSend = (String)binFormatterRecive.Deserialize(mainStream);
-                        if (this.listBox1.InvokeRequired)
+                        if (this.textBox3.InvokeRequired)
                         {
-                            this.Invoke(new Action(() => listBox1.Items.Add(whatDataClientSend)));
+                            this.Invoke(new Action(() => textBox3.AppendText("["+ (DateTime.Now).ToString("HH:mm:ss") + "]" + " RECIVE FROM CLIENT:" + Environment.NewLine + whatDataClientSend + Environment.NewLine + "## END MSG ##\n")));
                         }
                     }
                 }
                 catch
                 {
-                    if (this.listBox1.InvokeRequired)
+                    if (this.listBox2.InvokeRequired)
                     {
                         this.Invoke(new Action(() => listBox2.Items.Add("# Thread ReciveDataFromClient: Client close")));
                     }
@@ -113,6 +113,8 @@ namespace netRAtoolServer
                     binFormatter = new BinaryFormatter();
                     Listening = new Thread(StartListening);
                     GetData = new Thread(ReciveDataFromClient);
+
+                    textBox3.Clear();
 
                     Listening.Start();
 
@@ -159,7 +161,6 @@ namespace netRAtoolServer
                 button1.Text = "Listen";
                 button2.Visible = false;
                 textBox2.Visible = false;
-                listBox1.Items.Clear();
                 pictureBox1.Image = null;
             }
         }

