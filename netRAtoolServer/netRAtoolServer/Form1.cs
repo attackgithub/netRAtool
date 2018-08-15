@@ -10,13 +10,17 @@ namespace netRAtoolServer
 {
     public partial class Form1 : Form
     {
-        private int portServ;
-        private TcpClient client;
-        private TcpListener server;
+        private int portServCMD;
+        private int portServIMG;
+        private TcpClient clientCMD;
+        private TcpClient clientIMG;
+        private TcpListener serverCMD;
+        private TcpListener serverIMG;
 
         private bool threadON;
         private Thread Listening;
-        private Thread GetData;
+        private Thread GetDataIMG;
+        private Thread GetDataCMD;
         BinaryFormatter binFormatter;
 
         public Form1()
@@ -26,14 +30,21 @@ namespace netRAtoolServer
 
         private void StartListening()
         {
-            while (!client.Connected)
-            {
-                server.Start();
-                client = server.AcceptTcpClient();
-            }
-
             threadON = true;
-            GetData.Start();
+
+            while (!clientIMG.Connected)
+            {
+                serverIMG.Start();
+                clientIMG = serverIMG.AcceptTcpClient();
+            }
+            GetDataIMG.Start();
+            
+            while (!clientCMD.Connected)
+            {
+                serverCMD.Start();
+                clientCMD = serverCMD.AcceptTcpClient();
+            }
+            GetDataCMD.Start();
 
             if (this.listBox2.InvokeRequired)
             {
@@ -41,46 +52,30 @@ namespace netRAtoolServer
             }
         }
 
-        private void ReciveDataFromClient()
+        private void ReciveDataFromClientIMG()
         {
             BinaryFormatter binFormatterRecive = new BinaryFormatter();
-            String whatDataClientSend;
             NetworkStream mainStream;
 
-            while (client.Connected && threadON)
+            while (clientIMG.Connected && threadON)
             {
-                mainStream = client.GetStream();
-
-                try
+               try
                 {
-                    whatDataClientSend = (String)binFormatterRecive.Deserialize(mainStream);
-                    if (whatDataClientSend.StartsWith("img"))
+                    mainStream = clientIMG.GetStream();
+                    try
                     {
-                        try
-                        {
-                            mainStream = client.GetStream();
-                            pictureBox1.Image = (Image)binFormatterRecive.Deserialize(mainStream);
-                        }
-                        catch (Exception)
-                        {
-                            ;
-                        }
+                        pictureBox1.Image = (Image)binFormatterRecive.Deserialize(mainStream);
                     }
-                    else
+                    catch
                     {
-                        mainStream = client.GetStream();
-                        whatDataClientSend = (String)binFormatterRecive.Deserialize(mainStream);
-                        if (this.textBox3.InvokeRequired)
-                        {
-                            this.Invoke(new Action(() => textBox3.AppendText("["+ (DateTime.Now).ToString("HH:mm:ss") + "]" + " RECIVE FROM CLIENT:" + Environment.NewLine + whatDataClientSend + Environment.NewLine + "## END MSG ##\n")));
-                        }
+                        ;
                     }
                 }
                 catch
                 {
                     if (this.listBox2.InvokeRequired)
                     {
-                        this.Invoke(new Action(() => listBox2.Items.Add("# Thread ReciveDataFromClient: Client close")));
+                        this.Invoke(new Action(() => listBox2.Items.Add("# Thread ReciveDataFromClientIMG: Client close")));
                     }
 
                     if (this.button2.InvokeRequired)
@@ -92,12 +87,45 @@ namespace netRAtoolServer
 
             if (this.listBox2.InvokeRequired)
             {
-                this.Invoke(new Action(() => listBox2.Items.Add("# Thread ReciveDataFromClient is finish")));
+                this.Invoke(new Action(() => listBox2.Items.Add("# Thread ReciveDataFromClientIMG is finish")));
+            }
+        }
+
+        private void ReciveDataFromClientCMD()
+        {
+            BinaryFormatter binFormatterRecive = new BinaryFormatter();
+            String dataClientSend;
+            NetworkStream mainStream;
+
+            while (clientCMD.Connected && threadON)
+            {
+                mainStream = clientCMD.GetStream();
+
+                try
+                {
+                    dataClientSend = (String)binFormatterRecive.Deserialize(mainStream);
+                    if (this.textBox3.InvokeRequired)
+                    {
+                        this.Invoke(new Action(() => textBox3.AppendText("[" + (DateTime.Now).ToString("HH:mm:ss") + "]" + " RECIVE FROM CLIENT:" + Environment.NewLine + dataClientSend + Environment.NewLine + "## END MSG ##\n")));
+                    }
+                }
+                catch
+                {
+                    if (this.listBox2.InvokeRequired)
+                    {
+                        this.Invoke(new Action(() => listBox2.Items.Add("# Thread ReciveDataFromClientCMD: Client close")));
+                    }
+
+                    if (this.button2.InvokeRequired)
+                    {
+                        this.Invoke(new Action(() => button2.PerformClick()));
+                    }
+                }
             }
 
-            if (this.button2.InvokeRequired)
+            if (this.listBox2.InvokeRequired)
             {
-                this.Invoke(new Action(() => button2.PerformClick()));
+                this.Invoke(new Action(() => listBox2.Items.Add("# Thread ReciveDataFromClientCMD is finish")));
             }
         }
 
@@ -107,12 +135,17 @@ namespace netRAtoolServer
             {
                 try
                 {
-                    portServ = Int32.Parse(textBox1.Text);
-                    client = new TcpClient();
-                    server = new TcpListener(IPAddress.Any, portServ);
+                    portServCMD = Int32.Parse(textBox1.Text);
+                    portServIMG = Int32.Parse(textBox4.Text);
+                    clientCMD = new TcpClient();
+                    clientIMG = new TcpClient();
+                    serverCMD = new TcpListener(IPAddress.Any, portServCMD);
+                    serverIMG = new TcpListener(IPAddress.Any, portServIMG);
+
                     binFormatter = new BinaryFormatter();
                     Listening = new Thread(StartListening);
-                    GetData = new Thread(ReciveDataFromClient);
+                    GetDataIMG = new Thread(ReciveDataFromClientIMG);
+                    GetDataCMD = new Thread(ReciveDataFromClientCMD);
 
                     textBox3.Clear();
 
@@ -133,7 +166,7 @@ namespace netRAtoolServer
                 cmdInputArg += textBox2.Text;
                 listBox2.Items.Add(">> Try execute: " + cmdInputArg);
                 textBox2.Clear();
-                NetworkStream mainStream = client.GetStream();
+                NetworkStream mainStream = clientCMD.GetStream();
                 if(mainStream.CanWrite)
                 {
                     binFormatter.Serialize(mainStream, cmdInputArg);
@@ -150,13 +183,18 @@ namespace netRAtoolServer
         {
             if (button1.Text.StartsWith("Execute"))
             {
-                server.Stop();
-                client.Close();
-                client = null;
+                serverCMD.Stop();
+                serverIMG.Stop();
+                clientCMD.Close();
+                clientIMG.Close();
+                clientCMD = null;
+                clientIMG = null;
+
                 threadON = false;
 
                 if (Listening.IsAlive) Listening.Abort();
-                if (GetData.IsAlive) GetData.Abort();
+                if (GetDataIMG.IsAlive) GetDataIMG.Abort();
+                if (GetDataCMD.IsAlive) GetDataCMD.Abort();
 
                 button1.Text = "Listen";
                 button2.Visible = false;
