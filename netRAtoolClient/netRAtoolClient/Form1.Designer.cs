@@ -30,7 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             this.btnConnectClick = new System.Windows.Forms.Button();
-            this.btnRemoteDesktop = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
@@ -46,19 +45,6 @@
             this.btnConnectClick.UseVisualStyleBackColor = false;
             this.btnConnectClick.Click += new System.EventHandler(this.btnConnectClick_Click);
             // 
-            // btnRemoteDesktop
-            // 
-            this.btnRemoteDesktop.BackColor = System.Drawing.Color.Black;
-            this.btnRemoteDesktop.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
-            this.btnRemoteDesktop.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
-            this.btnRemoteDesktop.Location = new System.Drawing.Point(12, 43);
-            this.btnRemoteDesktop.Name = "btnRemoteDesktop";
-            this.btnRemoteDesktop.Size = new System.Drawing.Size(50, 27);
-            this.btnRemoteDesktop.TabIndex = 3;
-            this.btnRemoteDesktop.Text = "Share";
-            this.btnRemoteDesktop.UseVisualStyleBackColor = false;
-            this.btnRemoteDesktop.Click += new System.EventHandler(this.btnRemoteDesktop_Click);
-            // 
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
@@ -68,8 +54,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.ClientSize = new System.Drawing.Size(59, 61);
-            this.Controls.Add(this.btnRemoteDesktop);
+            this.ClientSize = new System.Drawing.Size(84, 51);
             this.Controls.Add(this.btnConnectClick);
             this.ForeColor = System.Drawing.SystemColors.ControlText;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -81,7 +66,6 @@
 
         #endregion
         private System.Windows.Forms.Button btnConnectClick;
-        private System.Windows.Forms.Button btnRemoteDesktop;
         private System.Windows.Forms.Timer timer1;
     }
 }
