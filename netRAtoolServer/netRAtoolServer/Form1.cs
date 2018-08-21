@@ -46,10 +46,7 @@ namespace netRAtoolServer
             }
             GetDataCMD.Start();
 
-            if (this.listBox2.InvokeRequired)
-            {
-                this.Invoke(new Action(() => listBox2.Items.Add("# Thread StartListening is finish")));
-            }
+            Console.WriteLine("# Thread StartListening is finish");
         }
 
         private void ReciveDataFromClientIMG()
@@ -73,10 +70,7 @@ namespace netRAtoolServer
                 }
                 catch
                 {
-                    if (this.listBox2.InvokeRequired)
-                    {
-                        this.Invoke(new Action(() => listBox2.Items.Add("# Thread ReciveDataFromClientIMG: Client close")));
-                    }
+                    Console.WriteLine("# Thread ReciveDataFromClientIMG: Client close");
 
                     if (this.button2.InvokeRequired)
                     {
@@ -85,10 +79,7 @@ namespace netRAtoolServer
                 }
             }
 
-            if (this.listBox2.InvokeRequired)
-            {
-                this.Invoke(new Action(() => listBox2.Items.Add("# Thread ReciveDataFromClientIMG is finish")));
-            }
+            Console.WriteLine("# Thread ReciveDataFromClientIMG is finish");
         }
 
         private void ReciveDataFromClientCMD()
@@ -111,10 +102,7 @@ namespace netRAtoolServer
                 }
                 catch
                 {
-                    if (this.listBox2.InvokeRequired)
-                    {
-                        this.Invoke(new Action(() => listBox2.Items.Add("# Thread ReciveDataFromClientCMD: Client close")));
-                    }
+                    Console.WriteLine("# Thread ReciveDataFromClientCMD: Client close");
 
                     if (this.button2.InvokeRequired)
                     {
@@ -123,10 +111,7 @@ namespace netRAtoolServer
                 }
             }
 
-            if (this.listBox2.InvokeRequired)
-            {
-                this.Invoke(new Action(() => listBox2.Items.Add("# Thread ReciveDataFromClientCMD is finish")));
-            }
+            Console.WriteLine("# Thread ReciveDataFromClientCMD is finish");
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -152,6 +137,7 @@ namespace netRAtoolServer
                     Listening.Start();
 
                     button1.Text = "Execute command";
+                    label3.Visible = true;
                     textBox2.Visible = true;
                     button2.Visible = true;
                 }
@@ -164,17 +150,19 @@ namespace netRAtoolServer
             {
                 String cmdInputArg = "/C ";
                 cmdInputArg += textBox2.Text;
-                listBox2.Items.Add(">> Try execute: " + cmdInputArg);
+
+                Console.WriteLine(">> Try execute: " + cmdInputArg);
+
                 textBox2.Clear();
                 NetworkStream mainStream = clientCMD.GetStream();
                 if(mainStream.CanWrite)
                 {
                     binFormatter.Serialize(mainStream, cmdInputArg);
-                    listBox2.Items.Add(">> Send");
+                    Console.WriteLine(">> Send");
                 }
                 else
                 {
-                    listBox2.Items.Add(">> Cannot write!!!");
+                    textBox3.AppendText("[" + (DateTime.Now).ToString("HH:mm:ss") + "]" + "Cannot execute command");
                 }
             }
         }
@@ -197,10 +185,17 @@ namespace netRAtoolServer
                 if (GetDataCMD.IsAlive) GetDataCMD.Abort();
 
                 button1.Text = "Listen";
+                label3.Visible = false;
                 button2.Visible = false;
                 textBox2.Visible = false;
                 pictureBox1.Image = null;
             }
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+            textBox2.Text = "exitRATCli";
+            button1.PerformClick();
         }
     }
 }
